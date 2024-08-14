@@ -33,7 +33,6 @@ function loadJSONObject(path){
     }
     xhr.setRequestHeader("If-Modified-Since", "Fri, 01 Jan 1960 00:00:00 GMT");
     xhr.send(null);
-    // failed request?
     if (xhr.status !== 200 && xhr.status !== 0) { return null; }
     return new JSONObject(JSON.parse(xhr.responseText));
   }
