@@ -1,0 +1,34 @@
+{
+  "index":5,
+  "light":"default",
+  "background":"default",
+  "stage_time":"afternoon",
+  "type":"boss",
+  "mission":[
+    {
+      "name":"defeat_*boss",
+      "attribute":"must"
+    },
+    {
+      "name":"score_1500",
+      "attribute":"bonus"
+    },
+    {
+      "name":"score_2500",
+      "attribute":"challenge"
+    },
+    {
+      "name":"score_3500",
+      "attribute":"hard_challenge"
+    }
+  ],
+  "main":[
+    {
+      "event":[
+        {
+          "name":"summon_Lost_Signal"
+        }
+      ]
+    }
+  ]
+}

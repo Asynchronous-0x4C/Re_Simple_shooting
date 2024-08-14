@@ -1,0 +1,72 @@
+* {
+  -ms-user-select: none; /* IE 10+ */
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.container {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.container::-webkit-scrollbar {  
+  display: none;
+}
+
+body{
+  margin: 0px;
+}
+
+@font-face { 
+  font-family: "NotoSansJP-Light.ttf"; 
+
+  src: url("../data/font/NotoSansJP-Light.ttf") format("truetype") 
+}
+
+span{
+  font-family: "OpenSans-Regular";
+}
+
+#re-fullScreen{
+  position: absolute;
+  top: 120px;
+  left: 10px;
+  width: 75px;
+  height: 25px;
+  display: block;
+  color: #ffffff;
+  background-color: rgba(120, 120, 120, 0.7);
+  backdrop-filter: blur(2px);
+  border-style: none;
+}
+
+#re-fullScreen:hover{
+  background-color: rgba(60, 60, 60, 0.7);
+}
+
+#re-reload{
+  position: absolute;
+  top: 160px;
+  left: 10px;
+  width: 75px;
+  height: 25px;
+  display: block;
+  color: #ffffff;
+  background-color: rgba(120, 120, 120, 0.7);
+  backdrop-filter: blur(2px);
+  border-style: none;
+  box-shadow: #000000;
+}
+
+#re-reload:hover{
+  background-color: rgba(60, 60, 60, 0.7);
+}
+
+#app{
+  position: absolute;
+  image-rendering: pixelated;
+  width: 100%;
+  height: 100%;
+}

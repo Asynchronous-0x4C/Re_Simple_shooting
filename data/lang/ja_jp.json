@@ -1,0 +1,16 @@
+{
+  "start_information":"このサイトでは、iOS、MacOSを除いて音声と\nバイブレーションが利用できます。\n\n有効化しますか?(設定からも変更可能)",
+  "enable":"有効化する",
+  "disable":"無効化する",
+  "mission":"ミッション",
+  "boss":"ボス",
+  "must":"クリア条件",
+  "bonus":"ボーナス",
+  "challenge":"チャレンジ",
+  "hard_challenge":"高難易度チャレンジ",
+  "survive":"{}秒間生存する",
+  "score":"スコア{}を超える",
+  "defeat":"{}を倒す",
+  "desc_HP":"HPを{}増加",
+  "desc_Defence":"防御力を{}増加"
+}

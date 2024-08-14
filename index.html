@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<script Language="JavaScript">
+function hideScrollBar()
+{
+  document.body.style.overflow = "hidden";
+}
+</script>
+<head>
+  <link rel="icon" sizes="16x16" href="favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="manifest" href="./manifest.json">
+  <meta charset="utf-8">
+  <title>Re:Simple_shooting</title>
+  <meta name="keywords" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="content-language" content="ja" />
+  <meta name="description" content="リメイク版Simple_shooting">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="./css/app.css?v=1.0">
+  <script src="./js/processing.min.js"></script>
+  <script src="./js/wrapper.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(function(registration) {
+        console.log('Service Worker registered with scope:', registration.scope);
+        registration.update();
+      }).catch(function(error) {
+        console.log('Service Worker registration failed:', error);
+      });
+    }
+    window.addEventListener("load",function(){
+      resized();
+      setTimeout(()=>{
+        ref_applet.setup();
+      },10);
+    });
+  </script>
+</head>
+<body onLoad="hideScrollBar()">
+  <div id="wrapper" style="font-family: sans-serif;">
+    <canvas id="app" data-processing-sources="Re_Simple_shooting.pde Enemy.pde Event.pde Bullet.pde Particle.pde GUI.pde Game.pde Util.pde Strategy.pde"></canvas>
+  </div>
+  <button id="re-fullScreen">fullScreen</button>
+  <button id="re-reload">reload</button>
+</body>
+</html>

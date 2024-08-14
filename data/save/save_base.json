@@ -1,0 +1,51 @@
+{
+  "lang":"ja_jp",
+  "1":{
+    "date":{
+      "year":null,
+      "month":null,
+      "day":null,
+      "hour":null,
+      "minute":null
+    },
+    "progress":1,
+    "level":5,
+    "exp":0,
+    "Fusion Core":0,
+    "Meta Material":0,
+    "mission":{},
+    "skills":[]
+  },
+  "2":{
+    "date":{
+      "year":null,
+      "month":null,
+      "day":null,
+      "hour":null,
+      "minute":null
+    },
+    "progress":1,
+    "level":5,
+    "exp":0,
+    "Fusion Core":0,
+    "Meta Material":0,
+    "mission":{},
+    "skills":[]
+  },
+  "3":{
+    "date":{
+      "year":null,
+      "month":null,
+      "day":null,
+      "hour":null,
+      "minute":null
+    },
+    "progress":1,
+    "level":5,
+    "exp":0,
+    "Fusion Core":0,
+    "Meta Material":0,
+    "mission":{},
+    "skills":[]
+  }
+}
