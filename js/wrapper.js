@@ -16,32 +16,63 @@ function setReference(s){
      agent.indexOf("ipod") != -1){
     apple=true;
   }
+  const font=new FontFace('NotoSansJP-Light.ttf','url(../data/font/NotoSansJP-Light.ttf)');
+  font.load().then(()=>document.fonts.add(font));
 }
 
-function loadJSONObject(path){
+function loadJSONObjectAsync(path){
   const path_arr=path.split("/");
-  if(localStorage[path_arr[path_arr.length-1]]){
+  let result;
+  if(localStorage.hasOwnProperty(path_arr[path_arr.length-1])){
     path=path_arr[path_arr.length-1];
     const item=localStorage.getItem(path);
-    if(item==null)return null;
-    return new JSONObject(JSON.parse(item));
+    result=new JSONManager(Promise.resolve(item==null?null:new JSONObject(JSON.parse(item))));
   }else{
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", path, false);
-    if (xhr.overrideMimeType) {
-      xhr.overrideMimeType("text/plain");
-    }
-    xhr.setRequestHeader("If-Modified-Since", "Fri, 01 Jan 1960 00:00:00 GMT");
-    xhr.send(null);
-    if (xhr.status !== 200 && xhr.status !== 0) { return null; }
-    return new JSONObject(JSON.parse(xhr.responseText));
+    result=new JSONManager(fetch(path).then(res=>res.json()).then(res=>new JSONObject(res)));
   }
+  return result;
 }
 
 function saveJSONObject(obj,path){
   let path_arr=path.split("/");
   path=path_arr[path_arr.length-1];
   localStorage.setItem(path,obj);
+}
+
+class JSONManager{
+  
+  constructor(prom){
+    this.loaded=false;
+    this.tasks=[];
+    prom.then(res=>{
+      this.o=res;
+      this.loaded=true;
+      for(;this.tasks.length;){
+        this.tasks[0].accept(res);
+        this.tasks.shift();
+      }
+    });
+  }
+  
+  addTask(c){
+    if(!this.loaded){
+      this.tasks.push(c);
+    }else{
+      c.accept(this.o);
+    }
+  }
+  
+  isLoaded(){
+    return this.loaded;
+  }
+  
+  getObject(){
+    return this.o;
+  }
+  
+  setObject(o){
+    this.o=o;
+  }
 }
 
 function circle(x,y,l){
@@ -347,4 +378,58 @@ function resized(){
   canvas.height=h*getDPR();
 
   //ctx.scale(getDPR(),getDPR());console.log(getDPR(),window.devicePixelRatio||1)
+}
+
+class CacheLoadManager{
+  constructor(prom,event){
+    this.loaded=false;
+    prom.then(results=>{
+      this.loaded=true;
+      event.run();
+    });
+  }
+
+  isLoaded(){
+    return this.loaded;
+  }
+}
+
+const resources=[
+  'index.html',
+  'Re_Simple_shooting.pde',
+  'Bullet.pde',
+  'Enemy.pde',
+  'Event.pde',
+  'Game.pde',
+  'GUI.pde',
+  'Particle.pde',
+  'Strategy.pde',
+  'Util.pde',
+  './js/processing.min.js',
+  './js/wrapper.js',
+  './css/app.css',
+  './data/lang/ja_jp.json',
+  './data/save/save_base.json',
+  './data/save/save.json',
+  './data/font/NotoSansJP-Light.ttf',
+  './data/image/Attack_mask.png',
+  './data/image/Defence_mask.png',
+  './data/image/HP_mask.png',
+  './data/skills/Tree.json',
+  './data/sound/BulletCancel.wav',
+  './data/sound/Damaged.wav',
+  './data/sound/Defeat.wav',
+  './data/sound/Enter.mp3',
+  './data/sound/Exit.wav',
+  './data/sound/HitDamaged.wav',
+  './data/sound/Impact.wav',
+  './data/sound/Shot.wav'
+];
+
+for(let i=1;i<7;i++){
+  resources.push(`./data/stage/Stage${i}.json`);
+}
+
+function fetchAll(event){
+  return new CacheLoadManager(Promise.all(resources.map(r=>fetch(r))),event);
 }

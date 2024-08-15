@@ -81,6 +81,7 @@ class E2GAdapter extends GameComponent{
 class ComponentManager extends GameComponent{
   ArrayList<GameComponent> components=new ArrayList<GameComponent>();
   ArrayList<GameComponent> next=new ArrayList<GameComponent>();
+  ArrayList<GameComponent> rem=new ArrayList<GameComponent>();
   
   boolean clearNext=false;
   
@@ -102,7 +103,9 @@ class ComponentManager extends GameComponent{
       clearNext=false;
     }
     components.addAll(next);
+    components.removeAll(rem);
     next.clear();
+    rem.clear();
   }
   
   void display(){
@@ -126,6 +129,11 @@ class ComponentManager extends GameComponent{
   ComponentManager clearAll(){
     next.clear();
     clearNext=true;
+    return this;
+  }
+  
+  ComponentManager remove(GameComponent c){
+    rem.add(c);
     return this;
   }
 }

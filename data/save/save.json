@@ -1,66 +1,36 @@
 {
   "1": {
     "date": {
-      "month": 8,
-      "hour": 15,
-      "year": 2024,
-      "day": 14,
-      "minute": 12
+      "month": null,
+      "hour": null,
+      "year": null,
+      "day": null,
+      "minute": null
     },
-    "mission": {
-      "1": {
-        "hard_challenge": true,
-        "bonus": true,
-        "challenge": true,
-        "must": true
-      },
-      "2": {
-        "hard_challenge": true,
-        "bonus": true,
-        "challenge": true,
-        "must": true
-      },
-      "5": {
-        "hard_challenge": true,
-        "bonus": true,
-        "challenge": true,
-        "must": true
-      },
-      "6": {
-        "hard_challenge": true,
-        "bonus": true,
-        "challenge": true,
-        "must": true
-      }
-    },
-    "shop": {},
+    "skills": [],
+    "mission": {},
     "level": 5,
-    "Fusion Core": 4,
-    "progress": 6,
+    "Fusion Core": 0,
+    "progress": 1,
     "exp": 0,
     "Meta Material": 0
   },
   "2": {
     "date": {
-      "month": 2,
-      "hour": 21,
-      "year": 2024,
-      "day": 7,
-      "minute": 39
+      "month": null,
+      "hour": null,
+      "year": null,
+      "day": null,
+      "minute": null
     },
-    "mission": {
-      "1": {"must": true},
-      "2": {
-        "bonus": true,
-        "must": true
-      }
-    },
+    "skills": [],
+    "mission": {},
     "level": 5,
-    "Fusion Core": 3,
-    "progress": 3,
-    "exp": 0
+    "Fusion Core": 0,
+    "progress": 1,
+    "exp": 0,
+    "Meta Material": 0
   },
-  "haptics": true,
   "3": {
     "date": {
       "month": null,
@@ -69,11 +39,13 @@
       "day": null,
       "minute": null
     },
+    "skills": [],
     "mission": {},
     "level": 5,
     "Fusion Core": 0,
     "progress": 1,
-    "exp": 0
+    "exp": 0,
+    "Meta Material": 0
   },
   "lang": "ja_jp"
 }

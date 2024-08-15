@@ -1,8 +1,8 @@
-const CACHE_VERSION='rssc-v1';
-const DISP_VERSION='rssc-d-v1';
+const CACHE_VERSION='rssc-v1.1';
+const DISP_VERSION='rssc-d-v1.1';
 
 const resources=[
-  'index.hmtl',
+  'index.html',
   'Re_Simple_shooting.pde',
   'Bullet.pde',
   'Enemy.pde',
@@ -15,14 +15,13 @@ const resources=[
   './js/processing.min.js',
   './js/wrapper.js',
   './css/app.css',
-  './data/font/NotoSansJP-Light.ttf',
-  './data/font/NotoSansJP-Thin.ttf',
-  './data/image/Attack_mask.png',
-  './data/image/Defence_mask.png',
-  './data/image/HP_mask.png',
   './data/lang/ja_jp.json',
   './data/save/save_base.json',
   './data/save/save.json',
+  './data/font/NotoSansJP-Light.ttf',
+  './data/image/Attack_mask.png',
+  './data/image/Defence_mask.png',
+  './data/image/HP_mask.png',
   './data/skills/Tree.json',
   './data/sound/BulletCancel.wav',
   './data/sound/Damaged.wav',
@@ -40,20 +39,20 @@ for(let i=1;i<7;i++){
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_VERSION).then(cache => resources.forEach(r=>{cache.add(r);console.log(`Added ${r}`);}))
+    caches.open(CACHE_VERSION).then(cache => resources.forEach(r=>cache.add(r)))
   );
+  event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        console.log(response);
         return response || fetch(event.request)
           .then(networkResponse => {
             return caches.open(CACHE_VERSION)
               .then(cache => {
-                cache.put(event.request, networkResponse.clone());
+                if(event.request.url.includes('http'))cache.put(event.request, networkResponse.clone());
                 return networkResponse;
               });
           });

@@ -21,8 +21,8 @@ PVector mouse=new PVector(0,0);
 boolean mousePress=false;
 boolean mouseHover=false;
 
-HashMap<String,JSONObject> jsonCache;
-JSONObject saveData;
+HashMap<String,JSONManager> jsonCache;
+JSONManager saveData;
 JSONObject currentData;
 JSONObject defaultMissionData=JSONObject.parse("{}");
 int saveNumber;
@@ -37,13 +37,13 @@ boolean show_fps=false;
 
 int stageNumber=0;
 
-JSONObject stageData;
-JSONObject[] stageList=new JSONObject[5];
+JSONManager stageData;
+JSONManager[] stageList=new JSONManager[5];
 String loadedPath="";
 String endState="";
 int endScore=0;
 
-JSONObject langData;
+JSONManager langData;
 
 String font_name=isWeb()?"NotoSansJP-Light.ttf":"data/font/NotoSansJP-Light.ttf";
 
@@ -262,16 +262,20 @@ float sign(float x){
 }
 
 void initData(){
-  jsonCache=new HashMap<String,JSONObject>();
-  saveData=loadJSONObject("./data/save/save.json");
-  loadLang(saveData.getString("lang"));
+  jsonCache=new HashMap<String,JSONManager>();
+  saveData=loadJSONObjectAsync("./data/save/save.json");
+  saveData.addTask(new Consumer<JSONObject>(){
+    void accept(JSONObject o){
+      loadLang(o.getString("lang"));
+    }
+  });
   initAudio();
   initEvent();
   if(!isWeb())loadSound();
 }
 
 void loadLang(String code){
-  langData=loadJSONObject("./data/lang/"+code+".json");
+  langData=loadJSONObjectAsync("./data/lang/"+code+".json");
 }
 
 void loadSound(){
@@ -290,7 +294,7 @@ void readSound(String name,String path){
 }
 
 String translation(String s){
-  return langData.getString(s);
+  return langData.getObject().getString(s);
 }
 
 String syntax_translation(String s,String... token){

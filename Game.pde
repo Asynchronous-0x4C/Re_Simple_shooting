@@ -456,7 +456,7 @@ class Stage{
     factory=new InstanceFactory(ref_applet);
     if(!loadedPath.equals(path)){
       if(!jsonCache.containsKey(path)){
-        jsonCache.put(path,loadJSONObject(path));
+        jsonCache.put(path,loadJSONObjectAsync(path));
       }
       stageData=jsonCache.get(path);
     }
@@ -471,22 +471,26 @@ class Stage{
   }
   
   void loadStageData(){
-    stage_time=stageData.getString("stage_time");
-    JSONArray arr=stageData.getJSONArray("main");
-    type=stageData.getString("type");
-    switch(type){
-      case "normal":loadNormal(arr);break;
-      case "boss":loadBoss(arr);break;
-    }
-    JSONArray missions=stageData.getJSONArray("mission");
-    for(int i=0;i<missions.size();i++){
-      JSONObject obj=missions.getJSONObject(i);
-      this.missions.put(obj.getString("attribute"),new Mission(obj.getString("name")));
-    }
+    stageData.addTask(new Consumer<JSONObject>(){
+      void accept(JSONObject data){
+        stage_time=data.getString("stage_time");
+        JSONArray arr=data.getJSONArray("main");
+        type=data.getString("type");
+        switch(type){
+          case "normal":loadNormal(arr,data.getFloat("time"));break;
+          case "boss":loadBoss(arr);break;
+        }
+        JSONArray mission=data.getJSONArray("mission");
+        for(int i=0;i<mission.size();i++){
+          JSONObject obj=mission.getJSONObject(i);
+          missions.put(obj.getString("attribute"),new Mission(obj.getString("name")));
+        }
+      }
+    });
   }
   
-  void loadNormal(JSONArray arr){
-    maxTime=stageData.getFloat("time");
+  void loadNormal(JSONArray arr,float time){
+    maxTime=time;
     for(int i=0;i<arr.size();i++){
       JSONObject arr_obj=arr.getJSONObject(i);
       times.add(arr_obj.getFloat("time"));
@@ -751,7 +755,11 @@ class GameSystem{
     save_date.setInt("day",day());
     save_date.setInt("hour",hour());
     save_date.setInt("minute",minute());
-    saveJSONObject(saveData,"./data/save/save.json");
+    saveData.addTask(new Consumer<JSONObject>(){
+      void accept(JSONObject d){
+        saveJSONObject(d,"./data/save/save.json");
+      }
+    });
   }
   
   void display(){

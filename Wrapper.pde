@@ -173,6 +173,49 @@ class EntityProcess implements Runnable{
   }
 }
 
+class JSONManager{
+  JSONObject o=null;
+  
+  boolean loaded=false;
+  
+  ArrayList<Consumer<JSONObject>>tasks=new ArrayList<>();
+  
+  JSONManager(CompletableFuture<JSONObject> f){
+    f.thenAccept(res->{
+      o=res;
+      loaded=true;
+      for(;!tasks.isEmpty();){
+        tasks.get(0).accept(o);
+        tasks.remove(0);
+      }
+    });
+  }
+  
+  void addTask(Consumer<JSONObject> c){
+    if(!loaded){
+      tasks.add(c);
+    }else{
+      c.accept(o);
+    }
+  }
+  
+  boolean isLoaded(){
+    return loaded;
+  }
+  
+  JSONObject getObject(){
+    return o;
+  }
+  
+  void setObject(JSONObject o){
+    this.o=o;
+  }
+}
+
+JSONManager loadJSONObjectAsync(String path){
+  return new JSONManager(CompletableFuture.supplyAsync(()->loadJSONObject(path)));
+}
+
 boolean isApple(){
   return false;
 }
@@ -185,4 +228,21 @@ float getDPR(){
 
 void setTextureSampling(){
   ((PGraphicsOpenGL)g).textureSampling(2);
+}
+
+class CacheLoadManager{
+  boolean loaded=false;
+  
+  CacheLoadManager(Runnable r){
+    r.run();
+    loaded=true;
+  }
+  
+  boolean isLoaded(){
+    return loaded;
+  }
+}
+
+CacheLoadManager fetchAll(Runnable r){
+  return new CacheLoadManager(r);
 }

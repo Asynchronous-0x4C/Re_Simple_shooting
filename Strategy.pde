@@ -87,24 +87,42 @@ class StartStrategy extends Strategy{
         new Button(width*0.5-100,height*0.5-55+i*40,200,30).setEvent(new ButtonEvent(){
           void select(Button b){
             saveNumber=int(b.label.split(" ")[1]);
-            currentData=saveData.getJSONObject(str(saveNumber));
-            setNextStrategy(strategies.get("menu"));
+            saveData.addTask(new Consumer<JSONObject>(){
+              void accept(JSONObject data){
+                currentData=data.getJSONObject(str(saveNumber));
+                setNextStrategy(strategies.get("menu"));
+              }
+            });
           }
         }).setLabel("Save "+(i+1))
       );
-      JSONObject o=saveData.getJSONObject(str(i+1)).getJSONObject("date");
-      String date=o.isNull("year")?"No Data":o.getInt("year")+"/"+o.getInt("month")+"/"+o.getInt("day")+" "+o.getInt("hour")+":"+o.getInt("minute");
-      UImanager.add(new FlowText(date,new PVector(width*0.5+130,height*0.5-25+i*40),30,2,new Color(100,100,200,200)).setStyle(LEFT));
     }
+    saveData.addTask(new Consumer<JSONObject>(){
+      void accept(JSONObject data){
+        for(int i=0;i<3;i++){
+          JSONObject o=data.getJSONObject(str(i+1)).getJSONObject("date");
+          String date=o.isNull("year")?"No Data":o.getInt("year")+"/"+o.getInt("month")+"/"+o.getInt("day")+" "+o.getInt("hour")+":"+o.getInt("minute");
+          UImanager.add(new FlowText(date,new PVector(width*0.5+130,height*0.5-25+i*40),30,2,new Color(100,100,200,200)).setStyle(LEFT));
+        }
+      }
+    });
     UImanager.add(
       new Button(width*0.5-100,height*0.5+65,200,30).setEvent(new ButtonEvent(){
         void select(Button b){
           UImanager.add(
             new Button(width*0.5+130,height*0.5+65,100,30).setEvent(new ButtonEvent(){
               void select(Button b){
-                saveData=loadJSONObject("./data/save/save_base.json");
-                saveJSONObject(saveData,"./data/save/save.json");
-                init();
+                saveData.addTask(new Consumer<JSONObject>(){
+                  void accept(JSONObject data){
+                    loadJSONObjectAsync("./data/save/save_base.json").addTask(new Consumer<JSONObject>(){
+                      void accept(JSONObject base){
+                        saveJSONObject(base,"./data/save/save.json");
+                        saveData.setObject(base);
+                        init();
+                      }
+                    });
+                  }
+                });
               }
             }).setLabel("OK")
             .setHoverColor(new Color(120,40,40,180))
@@ -143,18 +161,34 @@ class StartStrategy extends Strategy{
     UImanager.add(new FlowText("v1.0.0 by 0x4C",new PVector(10,height-10),20,2,new Color(200,100,100,200)).setStyle(LEFT));
     UImanager.add(new FlowText("! This is beta !",new PVector(width*0.5,150),20,2,new Color(255,100,100,200)));
     if(!isWeb())return;
-    if(saveData.hasKey("haptics")){
-      if(!saveData.getBoolean("haptics")){
-        setVibration(false);
-        setMute(true);
+    saveData.addTask(new Consumer<JSONObject>(){
+      void accept(JSONObject data){
+        if(data.hasKey("haptics")){
+          if(!data.getBoolean("haptics")){
+            setVibration(false);
+            setMute(true);
+          }
+        }else{
+          UImanager.handleUpdate();
+          SelectDialog d=new SelectDialog(800,500,translation("enable"),translation("disable")).setText(translation("start_information"));
+          d.setEvent(new ButtonEvent(){void select(Button b){d.duration=0;data.setBoolean("haptics",true);saveJSONObject(data,"./data/save/save.json");}},
+                     new ButtonEvent(){void select(Button b){setVibration(false);setMute(true);d.duration=0;data.setBoolean("haptics",false);saveJSONObject(data,"./data/save/save.json");}});
+          dialogManager.add(d);
+        }
       }
-    }else{
-      UImanager.handleUpdate();
-      SelectDialog d=new SelectDialog(800,500,translation("enable"),translation("disable")).setText(translation("start_information"));
-      d.setEvent(new ButtonEvent(){void select(Button b){d.duration=0;saveData.setBoolean("haptics",true);saveJSONObject(saveData,"./data/save/save.json");}},
-                 new ButtonEvent(){void select(Button b){setVibration(false);setMute(true);d.duration=0;saveData.setBoolean("haptics",false);saveJSONObject(saveData,"./data/save/save.json");}});
-      dialogManager.add(d);
-    }
+    });
+    UImanager.add(
+      new Button(width*0.5-100,height*0.5+225,200,30).setEvent(new ButtonEvent(){
+        void select(Button b){
+          textSize(15);
+          FlowText load_text=new FlowText("Loading...",new PVector(width-textWidth("Loading..."),height-10),15,2,new Color(40,40,80,180));
+          UImanager.add(load_text);
+          fetchAll(new Runnable(){void run(){UImanager.remove(load_text);}});
+        }
+      }).setLabel("Load all assets")
+      .setHoverColor(new Color(40,40,80,180))
+      .setColor(new Color(100,100,140,200))
+    );
   }
   
   void update(){
@@ -230,18 +264,22 @@ class MenuStrategy extends Strategy{
             resetLight();
             ((Button)startManager.components.get(0)).setEnable(true);
             missionText.setStaticText("  "+translation("mission")+"(Stage"+stageNumber+")");
-            JSONArray missions=stageData.getJSONArray("mission");
-            for(int m_index=0;m_index<missions.size();m_index++){
-              JSONObject o=missions.getJSONObject(m_index);
-              boolean clear=currentData.getJSONObject("mission").hasKey(str(stageNumber))?currentData.getJSONObject("mission").getJSONObject(str(stageNumber)).getBoolean(o.getString("attribute"),false):false;
-              missionText.setData(o.getString("name"),o.getString("attribute"),clear);
-            }
+            stageData.addTask(new Consumer<JSONObject>(){
+              void accept(JSONObject d){
+                JSONArray missions=d.getJSONArray("mission");
+                for(int m_index=0;m_index<missions.size();m_index++){
+                  JSONObject o=missions.getJSONObject(m_index);
+                  boolean clear=currentData.getJSONObject("mission").hasKey(str(stageNumber))?currentData.getJSONObject("mission").getJSONObject(str(stageNumber)).getBoolean(o.getString("attribute"),false):false;
+                  missionText.setData(o.getString("name"),o.getString("attribute"),clear);
+                }
+              }
+            });
           }
         }).setLabel("stage "+(i+1+(stage_stride*5)))
       );
       String path="./data/stage/Stage"+(index+1)+".json";
       if(!jsonCache.containsKey(path)){
-        jsonCache.put(path,loadJSONObject(path));
+        jsonCache.put(path,loadJSONObjectAsync(path));
       }
       stageList[i]=jsonCache.get(path);
     }
@@ -341,11 +379,11 @@ class ConfigStrategy extends Strategy{
 }
 
 class ShopStrategy extends Strategy{
-  JSONObject tree;
+  JSONManager tree;
   
   ShopStrategy(){
     super("menu","shop");
-    tree=loadJSONObject("./data/skills/Tree.json");
+    tree=loadJSONObjectAsync("./data/skills/Tree.json");
   }
   
   void init(){
@@ -447,25 +485,32 @@ class StageStrategy extends Strategy{
       .setColor(new Color(75,75,140,150))
     );
     gameSystem=system;
-    if(stageList[(stageNumber-1)%5].getInt("index")!=stageNumber){
-      system.loadStage("./data/stage/Stage"+stageNumber+".json");
-    }else{
-      system.loadStage((stageNumber-1)%5);
-    }
-    setLight(system.stage.stage_time);
+    stageList[(stageNumber-1)%5].addTask(new Consumer<JSONObject>(){
+      void accept(JSONObject s){
+        if(s.getInt("index")!=stageNumber){
+          system.loadStage("./data/stage/Stage"+stageNumber+".json");
+        }else{
+          system.loadStage((stageNumber-1)%5);
+        }
+        setLight(system.stage.stage_time);
+      }
+    });
   }
   
   void update(){
+    if(!stageData.isLoaded())return;
     UImanager.update();
     system.update();
   }
   
   void display(){
+    if(!stageData.isLoaded())return;
     system.display();
     UImanager.display();
   }
   
   void displayShadow(){
+    if(!stageData.isLoaded())return;
     system.displayShadow();
     UImanager.displayShadow();
   }
