@@ -1,5 +1,5 @@
-const CACHE_VERSION='rssc-v1.1';
-const DISP_VERSION='rssc-d-v1.1';
+const CACHE_VERSION='rssc-v1.2';
+const DISP_VERSION='rssc-d-v1.2';
 
 const resources=[
   'index.html',

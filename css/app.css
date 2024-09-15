@@ -19,6 +19,12 @@ body{
   margin: 0px;
 }
 
+@font-face { 
+  font-family: "NotoSansJP-Light.ttf"; 
+
+  src: url("./data/font/NotoSansJP-Light.ttf") format("truetype") 
+}
+
 span{
   font-family: "OpenSans-Regular";
 }

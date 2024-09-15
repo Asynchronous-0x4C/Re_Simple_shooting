@@ -157,7 +157,9 @@ class StartStrategy extends Strategy{
       .setHoverColor(new Color(80,40,40,180))
       .setColor(new Color(140,100,100,200))
     );
-    UImanager.add(new FlowText("Re:Simple_shooting",new PVector(width*0.5,100),100,3,new Color(100,100,100,200)));
+    textSize(100);
+    float title_width=textWidth("Re:Simple_shooting");
+    UImanager.add(new FlowText("Re:Simple_shooting",new PVector(width*0.5,100),100*min(1,(width-20)/title_width),3,new Color(100,100,100,200)));
     UImanager.add(new FlowText("v1.0.0 by 0x4C",new PVector(10,height-10),20,2,new Color(200,100,100,200)).setStyle(LEFT));
     UImanager.add(new FlowText("! This is beta !",new PVector(width*0.5,150),20,2,new Color(255,100,100,200)));
     if(!isWeb())return;
