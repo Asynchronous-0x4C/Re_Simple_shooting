@@ -45,7 +45,7 @@ int endScore=0;
 
 JSONManager langData;
 
-String font_name=isWeb()?"NotoSansJP-Light.ttf":"data/font/NotoSansJP-Light.ttf";
+String font_name=isWeb()?"NotoSansJP-Light.ttf":"./data/font/NotoSansJP-Light.ttf";
 
 Color lightColor=new Color(255,255,255);
 Color backgroundAlbedo=new Color(190,190,185);
